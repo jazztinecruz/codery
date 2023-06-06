@@ -1,9 +1,6 @@
 import Avatar from "@core/components/elements/avatar";
 import Pin from "@core/components/elements/pin";
-import Route from "@core/components/elements/route";
-import Gigs from "@core/components/sections/gigs";
 import Hero from "@core/components/sections/hero";
-import useUser from "@core/hooks/use-user";
 import prisma from "@core/libraries/prisma";
 import { MapPinIcon, AtSymbolIcon, UserIcon } from "@heroicons/react/24/solid";
 import moment from "moment";
@@ -20,6 +17,17 @@ const Page = async ({ params }: Props) => {
     where: { username: params.username },
     include: {
       freelancer: true,
+      offers: {
+        include: {
+          user: true,
+          gig: true,
+          freelancer: {
+            include: {
+              user: true
+            }
+          }
+        },
+      },
     },
   });
 
@@ -32,6 +40,12 @@ const Page = async ({ params }: Props) => {
       skills: {
         include: {
           technology: true,
+        },
+      },
+      offers: {
+        include: {
+          user: true,
+          gig: true,
         },
       },
     },

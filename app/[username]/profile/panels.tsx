@@ -1,22 +1,19 @@
 "use client";
+import Avatar from "@core/components/elements/avatar";
 import Badge from "@core/components/elements/badge";
 import Button from "@core/components/elements/button";
 import Field from "@core/components/elements/field";
-import Text from "@core/components/elements/field/text";
-import Textarea from "@core/components/elements/field/textarea";
-import Symbol from "@core/components/elements/symbol";
 import Modal from "@core/components/layouts/modal";
 import useModal from "@core/hooks/use-modal";
-import { Tab } from "@headlessui/react";
+import { Menu, Tab } from "@headlessui/react";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
   Category,
-  Client,
-  Contract,
   Education,
   Employment,
   Freelancer,
   Gig,
+  Offer,
   Skill,
   Status,
   Technology,
@@ -25,12 +22,20 @@ import {
   User,
 } from "@prisma/client";
 import Image from "next/image";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Fragment, useState } from "react";
 
 type Props = {
   user:
     | (User & {
         freelancer: Freelancer | null;
+        offers: (Offer & {
+          user: User;
+          freelancer: Freelancer & {
+            user: User;
+          };
+          gig: Gig;
+        })[];
       })
     | null;
   freelancer: Freelancer & {
@@ -38,6 +43,10 @@ type Props = {
     employments: Employment[];
     testimonials: Testimonial[];
     skills: (Skill & { technology: Technology | null })[];
+    offers: (Offer & {
+      user: User;
+      gig: Gig;
+    })[];
   };
   gigs: (Gig & {
     category: Category;
@@ -51,6 +60,7 @@ type Props = {
 const Panels = ({ user, gigs, freelancer }: Props) => {
   const [selectedGig, setSelectedGig] = useState(gigs[0] ?? "");
   const editGigModal = useModal();
+  const router = useRouter();
 
   const initialFields = {
     title: selectedGig.title ?? "",
@@ -100,18 +110,28 @@ const Panels = ({ user, gigs, freelancer }: Props) => {
         }),
       });
       editGigModal.handleClose();
+      router.refresh();
     } catch (error) {
       console.log(error);
     }
   };
 
-  if (!gigs || !freelancer) return null;
+  const handleUpdateOfferStatus = async (offerId: string, status: Status) => {
+    await fetch("/api/offer/update-status", {
+      method: "PUT",
+      body: JSON.stringify({
+        id: offerId,
+        status: status,
+      }),
+    });
+    router.refresh();
+  };
 
   return (
     <section className="contain space-y-4">
       <Tab.Group as="div" className="flex w-full gap-6">
         <Tab.List className="flex h-fit flex-col items-center border bg-white">
-          {panels.map((panel, index) => (
+          {panels.map((panel) => (
             <Tab
               key={panel.title}
               className={({ selected }) =>
@@ -129,7 +149,7 @@ const Panels = ({ user, gigs, freelancer }: Props) => {
         </Tab.List>
 
         <Tab.Panels as="div" className="w-full">
-          <Tab.Panel>
+          <Tab.Panel as="div" className={`${freelancer ? "block" : "hidden"}`}>
             <section className="mb-2 flex flex-wrap gap-3">
               <div className="flex flex-col">
                 <h1 className="mb-2 font-semibold">Biography</h1>
@@ -147,14 +167,14 @@ const Panels = ({ user, gigs, freelancer }: Props) => {
 
             <h1 className="mb-2 font-semibold">Skills</h1>
             <section className="flex flex-wrap items-center gap-3">
-              {freelancer.skills.map(({ id, technology }) => (
+              {freelancer?.skills.map(({ id, technology }) => (
                 <Badge key={id} name={technology!.name} />
               ))}
             </section>
 
             <h1 className="my-4 font-semibold">Educations</h1>
             <section className="flex flex-wrap items-center gap-3">
-              {freelancer.educations.map((education) => (
+              {freelancer?.educations.map((education) => (
                 <div
                   key={education.id}
                   className="flex flex-col gap-1 rounded border bg-white py-3 px-6">
@@ -176,7 +196,7 @@ const Panels = ({ user, gigs, freelancer }: Props) => {
 
             <h1 className="my-4 font-semibold">Employments</h1>
             <section className="flex flex-wrap items-center gap-3">
-              {freelancer.employments.map((employment) => (
+              {freelancer?.employments.map((employment) => (
                 <div
                   key={employment.id}
                   className="flex flex-col gap-1 rounded border bg-white py-3 px-6">
@@ -201,7 +221,7 @@ const Panels = ({ user, gigs, freelancer }: Props) => {
 
             <h1 className="my-4 font-semibold">Testimonials</h1>
             <section className="flex flex-wrap items-center gap-3">
-              {freelancer.testimonials.map((testimonial) => (
+              {freelancer?.testimonials.map((testimonial) => (
                 <div
                   key={testimonial.id}
                   className="flex flex-col gap-1 rounded border bg-white py-3 px-6">
@@ -221,7 +241,7 @@ const Panels = ({ user, gigs, freelancer }: Props) => {
           </Tab.Panel>
 
           <Tab.Panel as="div" className="flex flex-col bg-white">
-            {gigs.map((gig) => (
+            {gigs?.map((gig) => (
               <div
                 key={gig.id}
                 className="flex cursor-pointer items-center gap-4 p-2 shadow hover:bg-slate-100">
@@ -251,6 +271,62 @@ const Panels = ({ user, gigs, freelancer }: Props) => {
                 </div>
               </div>
             ))}
+          </Tab.Panel>
+
+          <Tab.Panel>
+            {freelancer
+              ? freelancer.offers.map((offer) => (
+                  <div
+                    key={offer.id}
+                    className="grid grid-cols-[3fr,1fr,1fr,1fr,1fr] items-center gap-6 p-2 shadow hover:bg-slate-100">
+                    <h2 className="font-semibold">{offer.gig.title}</h2>
+                    <h6>${offer.price}</h6>
+                    <h6>{offer.status}</h6>
+                    <div className="flex items-center gap-2">
+                      <Avatar
+                        src={offer.user.image!}
+                        alt="profile"
+                        size="small"
+                      />
+                      <h6>{offer.user.name}</h6>
+                    </div>
+                    <Menu as="div" className="relative">
+                      <Menu.Button>
+                        <Button>ACTION</Button>
+                      </Menu.Button>
+                      <Menu.Items className="absolute top-8 right-0 z-10 flex w-64 flex-col bg-white shadow-lg">
+                        {Object.values(Status).map((status: any) => (
+                          <Menu.Item key={status} as={Fragment}>
+                            <button
+                              className="px-4 py-3 hover:bg-primary-dark hover:text-white"
+                              onClick={() =>
+                                handleUpdateOfferStatus(offer.id, status)
+                              }>
+                              {status}
+                            </button>
+                          </Menu.Item>
+                        ))}
+                      </Menu.Items>
+                    </Menu>
+                  </div>
+                ))
+              : user?.offers.map((offer) => (
+                  <div
+                    key={offer.id}
+                    className="grid grid-cols-[3fr,1fr,1fr,1fr] items-center gap-6 p-2 shadow hover:bg-slate-100">
+                    <h2 className="font-semibold">{offer.gig.title}</h2>
+                    <h6>${offer.price}</h6>
+                    <h6>{offer.status}</h6>
+                    <div className="flex items-center gap-2">
+                      <Avatar
+                        src={offer.freelancer.user.image!}
+                        alt="profile"
+                        size="small"
+                      />
+                      <h6>{offer.freelancer.user.name}</h6>
+                    </div>
+                  </div>
+                ))}
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
