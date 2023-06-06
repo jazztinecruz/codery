@@ -75,12 +75,12 @@ const Page = async ({ params }: Props) => {
               <Pin size="medium" Icon={UserIcon}>
                 {moment(user?.createdAt!).format("LL")}
               </Pin>
+              {user?.freelancer ? (
+                <span className="mt-auto w-fit rounded bg-primary-dark py-1 px-3 text-xs font-semibold text-white">
+                  freelancer
+                </span>
+              ) : null}
             </div>
-            {user?.freelancer ? (
-              <span className="mt-auto w-fit rounded bg-primary-dark py-1 px-3 text-xs font-semibold text-white">
-                freelancer
-              </span>
-            ) : null}
           </div>
         </div>
       </section>
