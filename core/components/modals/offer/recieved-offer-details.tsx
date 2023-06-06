@@ -85,7 +85,7 @@ const RecievedOfferDetailsModal = ({ offer, modal, user }: Props) => {
         </div>
       </Modal>
 
-      <PaymentModal user={user} modal={paymentModal} offferId={offer.id} />
+      <PaymentModal user={user} modal={paymentModal} price={offer.price} offferId={offer.id} />
 
       <Modal
         title="Rules and Regulations: Payment"

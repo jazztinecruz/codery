@@ -89,12 +89,7 @@ const Overview = ({ warnings, handleSubmit }: Props) => {
         ) : null}
       </Field.Body>
 
-      <div className="flex items-center gap-2">
-        <Button onClick={handleSubmit}>Become a Freelancer</Button>
-        <Button variant="secondary" onClick={handleSubmit}>
-          Save
-        </Button>
-      </div>
+      <Button onClick={handleSubmit}>Become a Freelancer</Button>
     </div>
   );
 };

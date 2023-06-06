@@ -11,20 +11,20 @@ import validate from "@core/utilities/validate";
 
 type Props = {
   offferId: string;
+  price: number;
   modal: ModalType;
   user: User & {
     freelancer: Freelancer | null;
   };
 };
 
-const PaymentModal = ({ modal, user, offferId }: Props) => {
+const PaymentModal = ({ modal, user, price, offferId }: Props) => {
   const [warnings, setWarnings] = useState<ZodIssue[]>([]);
 
   const [fields, setFields] = useState({
     month: 0,
     year: 0,
     cvc: "",
-    amount: 0,
     description: "",
   });
 
@@ -42,7 +42,7 @@ const PaymentModal = ({ modal, user, offferId }: Props) => {
       },
       cvc: fields.cvc,
     },
-    amount: fields.amount,
+    amount: price,
     description: fields.description,
   });
 
@@ -127,16 +127,8 @@ const PaymentModal = ({ modal, user, offferId }: Props) => {
         <Field.Body
           id="amount"
           label="Amount"
-          warning={validate(warnings, "amount")}
           description="How much are you going to send?">
-          <Field.Number
-            id="delivery"
-            isFull
-            value={+fields.amount}
-            onChange={(event) =>
-              setFields({ ...fields, amount: +event.target.value })
-            }
-          />
+          <Field.Number id="amount" isFull value={price} isDisabled />
         </Field.Body>
 
         <Field.Body
@@ -164,7 +156,6 @@ const PaymentModal = ({ modal, user, offferId }: Props) => {
               month: 0,
               year: 0,
               cvc: "",
-              amount: 0,
               description: "",
             })
           }>

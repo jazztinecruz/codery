@@ -275,58 +275,62 @@ const Panels = ({ user, gigs, freelancer }: Props) => {
 
           <Tab.Panel>
             {freelancer
-              ? freelancer.offers.map((offer) => (
-                  <div
-                    key={offer.id}
-                    className="grid grid-cols-[3fr,1fr,1fr,1fr,1fr] items-center gap-6 p-2 shadow hover:bg-slate-100">
-                    <h2 className="font-semibold">{offer.gig.title}</h2>
-                    <h6>${offer.price}</h6>
-                    <h6>{offer.status}</h6>
-                    <div className="flex items-center gap-2">
-                      <Avatar
-                        src={offer.user.image!}
-                        alt="profile"
-                        size="small"
-                      />
-                      <h6>{offer.user.name}</h6>
+              ? freelancer.offers
+                  .filter((offer) => offer.isAccepted)
+                  .map((offer) => (
+                    <div
+                      key={offer.id}
+                      className="grid grid-cols-[3fr,1fr,1fr,1fr,1fr] items-center gap-6 p-2 shadow hover:bg-slate-100">
+                      <h2 className="font-semibold">{offer.gig.title}</h2>
+                      <h6>${offer.price}</h6>
+                      <h6>{offer.status}</h6>
+                      <div className="flex items-center gap-2">
+                        <Avatar
+                          src={offer.user.image!}
+                          alt="profile"
+                          size="small"
+                        />
+                        <h6>{offer.user.name}</h6>
+                      </div>
+                      <Menu as="div" className="relative">
+                        <Menu.Button>
+                          <Button>ACTION</Button>
+                        </Menu.Button>
+                        <Menu.Items className="absolute top-8 right-0 z-10 flex w-64 flex-col bg-white shadow-lg">
+                          {Object.values(Status).map((status: any) => (
+                            <Menu.Item key={status} as={Fragment}>
+                              <button
+                                className="px-4 py-3 hover:bg-primary-dark hover:text-white"
+                                onClick={() =>
+                                  handleUpdateOfferStatus(offer.id, status)
+                                }>
+                                {status}
+                              </button>
+                            </Menu.Item>
+                          ))}
+                        </Menu.Items>
+                      </Menu>
                     </div>
-                    <Menu as="div" className="relative">
-                      <Menu.Button>
-                        <Button>ACTION</Button>
-                      </Menu.Button>
-                      <Menu.Items className="absolute top-8 right-0 z-10 flex w-64 flex-col bg-white shadow-lg">
-                        {Object.values(Status).map((status: any) => (
-                          <Menu.Item key={status} as={Fragment}>
-                            <button
-                              className="px-4 py-3 hover:bg-primary-dark hover:text-white"
-                              onClick={() =>
-                                handleUpdateOfferStatus(offer.id, status)
-                              }>
-                              {status}
-                            </button>
-                          </Menu.Item>
-                        ))}
-                      </Menu.Items>
-                    </Menu>
-                  </div>
-                ))
-              : user?.offers.map((offer) => (
-                  <div
-                    key={offer.id}
-                    className="grid grid-cols-[3fr,1fr,1fr,1fr] items-center gap-6 p-2 shadow hover:bg-slate-100">
-                    <h2 className="font-semibold">{offer.gig.title}</h2>
-                    <h6>${offer.price}</h6>
-                    <h6>{offer.status}</h6>
-                    <div className="flex items-center gap-2">
-                      <Avatar
-                        src={offer.freelancer.user.image!}
-                        alt="profile"
-                        size="small"
-                      />
-                      <h6>{offer.freelancer.user.name}</h6>
+                  ))
+              : user?.offers
+                  .filter((offer) => offer.isAccepted)
+                  .map((offer) => (
+                    <div
+                      key={offer.id}
+                      className="grid grid-cols-[3fr,1fr,1fr,1fr] items-center gap-6 p-2 shadow hover:bg-slate-100">
+                      <h2 className="font-semibold">{offer.gig.title}</h2>
+                      <h6>${offer.price}</h6>
+                      <h6>{offer.status}</h6>
+                      <div className="flex items-center gap-2">
+                        <Avatar
+                          src={offer.freelancer.user.image!}
+                          alt="profile"
+                          size="small"
+                        />
+                        <h6>{offer.freelancer.user.name}</h6>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
