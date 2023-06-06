@@ -65,9 +65,6 @@ const Menu = ({ user, className }: Props) => {
               <Route Icon={UserIcon} href={`/${user.username}/profile`}>
                 Profile
               </Route>
-              <Route Icon={ChartPieIcon} href="/">
-                Dashboard
-              </Route>
               {user.freelancer ? (
                 <Route
                   Icon={PlusCircleIcon}
