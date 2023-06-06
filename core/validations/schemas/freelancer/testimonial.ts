@@ -13,7 +13,7 @@ const testimonial = z.object({
   message: z
     .string()
     .min(10, "Message should have at lease 1 valid character.")
-    .max(1000, "Message should not exceed more than 1000 valid characters."),
+    .max(200, "Message should not exceed more than 200 valid characters."),
 });
 
 export default testimonial;

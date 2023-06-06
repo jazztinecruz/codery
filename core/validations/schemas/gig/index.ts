@@ -9,7 +9,7 @@ const gig = z.object({
   description: z
     .string()
     .min(10, "Description must have at least 10 characters.")
-    .max(1000, "Description must not exceed to 1000 characters."),
+    .max(200, "Description must not exceed to 200 characters."),
   category: z.object({
     id: z.string().cuid("Gig should have a category."),
     name: z.string(),

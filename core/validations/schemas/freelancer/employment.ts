@@ -13,8 +13,8 @@ const employment = z.object({
     .string()
     .min(10, "Description should have at lease 10 valid characters.")
     .max(
-      1000,
-      "Description should not exceed more than 1000 valid characters."
+      200,
+      "Description should not exceed more than 200 valid characters."
     ),
   location: z
     .string()

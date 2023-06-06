@@ -31,7 +31,7 @@ const Textarea = ({
         disabled={isDisabled}
         className={`${isFull ? "w-full" : ""} clearance rounded border text-sm`}
       />
-      <span className="ml-auto text-sm font-semibold">{value?.length ?? 0}/1000 Characters</span>
+      <span className="ml-auto text-sm font-semibold">{value?.length ?? 0}/200 Characters</span>
     </div>
   );
 };
