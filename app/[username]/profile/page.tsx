@@ -4,7 +4,7 @@ import Hero from "@core/components/sections/hero";
 import prisma from "@core/libraries/prisma";
 import { MapPinIcon, AtSymbolIcon, UserIcon } from "@heroicons/react/24/solid";
 import moment from "moment";
-import Panels from "./panels-copy";
+import Panels from "./panels";
 
 type Props = {
   params: {
