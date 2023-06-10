@@ -22,11 +22,13 @@ import {
   Thumbnail,
   User,
 } from "@prisma/client";
+import { Session } from "next-auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Fragment, useState } from "react";
 
 type Props = {
+  session: Session | null;
   user:
     | (User & {
         offers: (Offer & {
@@ -50,12 +52,21 @@ type Props = {
     | null;
 };
 
-const Panels = ({ user, freelancer }: Props) => {
+const Panels = ({ user, freelancer, session }: Props) => {
   const panels = [
     { title: "Freelancer Details", show: freelancer ?? false },
-    { title: "Manage Gigs", show: freelancer ?? false },
-    { title: "Track Offers", show: true },
-    { title: "Billing Information", show: true },
+    {
+      title: "Manage Gigs",
+      show: (session?.user?.email === user?.email && freelancer) ?? false,
+    },
+    {
+      title: "Track Offers",
+      show: session?.user?.email === user?.email ?? false,
+    },
+    {
+      title: "Billing Information",
+      show: session?.user?.email === user?.email ?? false,
+    },
     { title: "Rating and Reviews", show: true },
   ];
 

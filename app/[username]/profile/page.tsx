@@ -1,6 +1,7 @@
 import Avatar from "@core/components/elements/avatar";
 import Pin from "@core/components/elements/pin";
 import Hero from "@core/components/sections/hero";
+import useSession from "@core/hooks/use-session";
 import prisma from "@core/libraries/prisma";
 import { MapPinIcon, AtSymbolIcon, UserIcon } from "@heroicons/react/24/solid";
 import moment from "moment";
@@ -13,6 +14,7 @@ type Props = {
 };
 
 const Page = async ({ params }: Props) => {
+  const session = await useSession();
   const user = await prisma.user.findUnique({
     where: { username: params.username },
     include: {
@@ -91,7 +93,7 @@ const Page = async ({ params }: Props) => {
       </section>
 
       {/* @ts-ignore */}
-      <Panels user={user} freelancer={freelancer} />
+      <Panels user={user} freelancer={freelancer} session={session} />
     </>
   );
 };
