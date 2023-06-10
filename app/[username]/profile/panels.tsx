@@ -3,6 +3,9 @@
 import Avatar from "@core/components/elements/avatar";
 import Badge from "@core/components/elements/badge";
 import Button from "@core/components/elements/button";
+import Field from "@core/components/elements/field";
+import Modal from "@core/components/layouts/modal";
+import useModal from "@core/hooks/use-modal";
 import { Menu, Tab } from "@headlessui/react";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
@@ -20,7 +23,8 @@ import {
   User,
 } from "@prisma/client";
 import Image from "next/image";
-import { Fragment } from "react";
+import { useRouter } from "next/navigation";
+import { Fragment, useState } from "react";
 
 type Props = {
   user:
@@ -55,6 +59,65 @@ const Panels = ({ user, freelancer }: Props) => {
     { title: "Rating and Reviews", show: true },
   ];
 
+  const [selectedGig, setSelectedGig] = useState(freelancer?.gigs[0]);
+  const initialFields = {
+    title: selectedGig ?? "",
+    description: selectedGig?.description ?? "",
+    from: selectedGig?.from ?? 0,
+    to: selectedGig?.to ?? 0,
+    period: selectedGig?.period ?? 0,
+  };
+
+  const [editFields, setEditFields] = useState(initialFields);
+  const editGigModal = useModal();
+  const router = useRouter();
+
+  const handleDeleteGig = async (id: string) => {
+    try {
+      const response = await fetch(`/api/gigs/${id}/delete`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        router.refresh();
+      } else {
+        console.error("Failed to delete gig");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleEditGig = async () => {
+    try {
+      await fetch(`/api/gigs/${selectedGig?.id}/edit`, {
+        method: "PUT",
+        body: JSON.stringify({
+          id: selectedGig?.id,
+          title: editFields.title,
+          description: editFields.description,
+          from: +editFields.from,
+          to: +editFields.to,
+          revision: +editFields.period,
+        }),
+      });
+      editGigModal.handleClose();
+      router.refresh();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleUpdateOfferStatus = async (offerId: string, status: Status) => {
+    await fetch("/api/offer/update-status", {
+      method: "PUT",
+      body: JSON.stringify({
+        id: offerId,
+        status: status,
+      }),
+    });
+    router.refresh();
+  };
   return (
     <section className="contain space-y-4">
       <Tab.Group as="div" className="flex w-full gap-6">
@@ -196,8 +259,17 @@ const Panels = ({ user, freelancer }: Props) => {
                     <h6 className="text-xs">{gig.category.name}</h6>
                   </div>
                   <div className="ml-auto flex items-center gap-2">
-                    <PencilSquareIcon className="h-5 w-5" />
-                    <TrashIcon className="h-5 w-5 text-red-500" />
+                    <PencilSquareIcon
+                      className="h-5 w-5"
+                      onClick={() => {
+                        setSelectedGig(gig);
+                        editGigModal.handleOpen();
+                      }}
+                    />
+                    <TrashIcon
+                      className="h-5 w-5 text-red-500"
+                      onClick={() => handleDeleteGig(gig.id)}
+                    />
                   </div>
                 </div>
               ))}
@@ -231,7 +303,11 @@ const Panels = ({ user, freelancer }: Props) => {
                       <Menu.Items className="absolute top-8 right-0 z-10 flex w-64 flex-col bg-white shadow-lg">
                         {Object.values(Status).map((status: any) => (
                           <Menu.Item key={status} as={Fragment}>
-                            <button className="px-4 py-3 hover:bg-primary-dark hover:text-white">
+                            <button
+                              className="px-4 py-3 hover:bg-primary-dark hover:text-white"
+                              onClick={() =>
+                                handleUpdateOfferStatus(offer.id, status)
+                              }>
                               {status}
                             </button>
                           </Menu.Item>
@@ -264,6 +340,100 @@ const Panels = ({ user, freelancer }: Props) => {
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
+
+      <Modal
+        title="Edit Gig: Details"
+        description="You can edit your gig information here."
+        state={editGigModal.state}
+        handleClose={editGigModal.handleClose}
+        className="z-[999] max-w-5xl">
+        <div className="z-[999] grid gap-8 laptop:grid-cols-2">
+          <Field.Body
+            id="title"
+            label="Title"
+            description="State your Gig Title">
+            <Field.Text
+              id="title"
+              isFull
+              defaultValue={selectedGig?.title}
+              onChange={(event) =>
+                setEditFields({ ...editFields, title: event.target.value })
+              }
+            />
+          </Field.Body>
+
+          <Field.Body
+            id="description"
+            label="Description"
+            description="State your Gig Description">
+            <Field.Textarea
+              id="description"
+              isFull
+              defaultValue={selectedGig?.description}
+              onChange={(event) =>
+                setEditFields({
+                  ...editFields,
+                  description: event.target.value,
+                })
+              }
+            />
+          </Field.Body>
+
+          <Field.Body
+            id="from"
+            label="From"
+            description="State your Starting Price">
+            <Field.Number
+              id="from"
+              isFull
+              defaultValue={selectedGig?.from}
+              onChange={(event) =>
+                setEditFields({ ...editFields, from: +event.target.value })
+              }
+            />
+          </Field.Body>
+
+          <Field.Body id="to" label="to" description="State your Maximum Price">
+            <Field.Number
+              id="to"
+              isFull
+              defaultValue={selectedGig?.to}
+              onChange={(event) =>
+                setEditFields({ ...editFields, to: +event.target.value })
+              }
+            />
+          </Field.Body>
+
+          <Field.Body
+            id="period"
+            label="Revision"
+            description="State your Days of Revision">
+            <Field.Number
+              id="period"
+              isFull
+              defaultValue={selectedGig?.period}
+              onChange={(event) =>
+                setEditFields({ ...editFields, period: +event.target.value })
+              }
+            />
+          </Field.Body>
+        </div>
+
+        <div className="flex w-full gap-4">
+          <Button onClick={handleEditGig}>Save Changes</Button>
+          <Button
+            variant="secondary"
+            onClick={() => setEditFields(initialFields)}>
+            Clear
+          </Button>
+          <Button
+            variant="tertiary"
+            onClick={editGigModal.handleClose}
+            className="ml-auto">
+            Close
+          </Button>
+        </div>
+      </Modal>
     </section>
   );
 };
