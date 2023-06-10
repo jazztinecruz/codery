@@ -27,11 +27,11 @@ const gig = z.object({
   from: z
     .number()
     .positive("Price should be positive only.")
-    .min(5, "Price should starts with 5 dollars."),
+    .min(5, "Price should starts with 5 PHP."),
   to: z
     .number()
     .positive("Price should be positive only.")
-    .max(10000, "Price should not exceed more than 10000 dollars."),
+    .max(10000, "Price should not exceed more than 10000 PHP."),
   period: z.number().positive("Period should be positive only."),
   isPublished: z.boolean(),
 });

@@ -94,7 +94,7 @@ const General = ({ warnings }: Props) => {
             id="from"
             label="Starting Price"
             description="Set your starting price."
-            tooltip="All prices should start from 5 dollars."
+            tooltip="All prices should start from 5 PHP."
             warning={validate(warnings, "from")}>
             <Field.Number
               id="from"
@@ -107,7 +107,7 @@ const General = ({ warnings }: Props) => {
             id="to"
             label="Up to"
             description="Set your highest price based on your skill."
-            tooltip="You can set your maximum price up to 1000 dollars."
+            tooltip="You can set your maximum price up to 1000 PHP."
             warning={validate(warnings, "to")}>
             <Field.Number
               id="to"

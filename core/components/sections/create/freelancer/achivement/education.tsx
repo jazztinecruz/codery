@@ -143,7 +143,7 @@ const Education = ({ modal }: Props) => {
           id="to"
           label="To Year"
           description="In what year did you Graduate?"
-          tooltip="All prices should start from 50 dollars."
+          tooltip="All prices should start from 50 PHP."
           warning={validate(warnings, "to")}>
           <Field.Select.Combo
             options={years}

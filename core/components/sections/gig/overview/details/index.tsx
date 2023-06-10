@@ -62,7 +62,7 @@ const Details = ({ user, gig }: Props) => {
       </div>
       {gig.freelancer.userId !== user?.id ? (
         <Button onClick={handleMakeOrder} isFull>
-          Order {`$${gig.from} - $${gig.to}`}
+          Order {`PHP${gig.from} - PHP${gig.to}`}
         </Button>
       ) : null}
       <Group name="About Me">

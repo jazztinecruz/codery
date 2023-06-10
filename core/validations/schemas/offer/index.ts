@@ -8,8 +8,8 @@ const offer = z.object({
   price: z
     .number()
     .positive("Price should be positive only.")
-    .min(5, "Price should starts with 5 dollars.")
-    .max(10000, "Price should not exceed more than 10000 dollars."),
+    .min(5, "Price should starts with 5 PHP.")
+    .max(10000, "Price should not exceed more than 10000 PHP."),
   revision: z.number().positive("Revision should be positive only."),
   deliveryDays: z.number().positive("Delivery should be positive only."),
 });
