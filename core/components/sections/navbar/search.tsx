@@ -2,24 +2,25 @@
 
 import { useState, useRef } from "react";
 import { Listbox, Transition } from "@headlessui/react";
-import { Gig, User } from "@prisma/client";
+import { Freelancer, Gig, User } from "@prisma/client";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 
 type Props = {
   users: User[];
-  gigs: Gig[];
-  username: string;
+  gigs: (Gig & {
+    freelancer: Freelancer & {
+      user: User;
+    };
+  })[];
 };
 
-const Search = ({ users, gigs, username }: Props) => {
+const Search = ({ users, gigs }: Props) => {
   const [searchTerm, setSearchTerm] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const filteredUsers = users.filter((user) => {
-    if (user.username !== username) {
-      user.name?.toLowerCase().includes(searchTerm.toLowerCase());
-    }
+    user.name?.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   const filteredGigs = gigs.filter((gig) =>
@@ -56,7 +57,7 @@ const Search = ({ users, gigs, username }: Props) => {
           className="absolute z-[999] mt-2 max-h-64 w-full overflow-auto rounded-md bg-white shadow-lg">
           {filteredUsers.length > 0 || filteredGigs.length > 0 ? (
             <>
-              {filteredUsers.map((user) => (
+              {users.filter((user) => user.username?.toLowerCase().includes(searchTerm.toLowerCase())).map((user) => (
                 <Link key={user.id} href={`/${user.username}/profile`}>
                   <Listbox.Option
                     value={user}
@@ -71,7 +72,9 @@ const Search = ({ users, gigs, username }: Props) => {
                 </Link>
               ))}
               {filteredGigs.map((gig) => (
-                <Link key={gig.id} href={`/${username}/${gig.id}`}>
+                <Link
+                  key={gig.id}
+                  href={`/${gig.freelancer.user.username}/${gig.id}`}>
                   <Listbox.Option
                     value={gig}
                     className={({ active }) =>
