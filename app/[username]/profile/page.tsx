@@ -16,16 +16,14 @@ const Page = async ({ params }: Props) => {
   const user = await prisma.user.findUnique({
     where: { username: params.username },
     include: {
-      freelancer: true,
       offers: {
         include: {
-          user: true,
           gig: true,
           freelancer: {
             include: {
-              user: true
-            }
-          }
+              user: true,
+            },
+          },
         },
       },
     },
@@ -34,6 +32,12 @@ const Page = async ({ params }: Props) => {
   const freelancer = await prisma.freelancer.findUnique({
     where: { userId: user?.id },
     include: {
+      gigs: {
+        include: {
+          category: true,
+          thumbnails: true,
+        },
+      },
       educations: true,
       employments: true,
       testimonials: true,
@@ -46,19 +50,6 @@ const Page = async ({ params }: Props) => {
         include: {
           user: true,
           gig: true,
-        },
-      },
-    },
-  });
-
-  const gigs = await prisma.gig.findMany({
-    where: { freelancerId: freelancer?.id ?? "!" },
-    include: {
-      category: true,
-      thumbnails: true,
-      freelancer: {
-        include: {
-          user: true,
         },
       },
     },
@@ -89,7 +80,7 @@ const Page = async ({ params }: Props) => {
               <Pin size="medium" Icon={UserIcon}>
                 {moment(user?.createdAt!).format("LL")}
               </Pin>
-              {user?.freelancer ? (
+              {freelancer ? (
                 <span className="mt-auto w-fit rounded bg-primary-dark py-1 px-3 text-xs font-semibold text-white">
                   freelancer
                 </span>
@@ -98,8 +89,9 @@ const Page = async ({ params }: Props) => {
           </div>
         </div>
       </section>
+
       {/* @ts-ignore */}
-      <Panels user={user} freelancer={freelancer!} gigs={gigs} />
+      <Panels user={user} freelancer={freelancer} />
     </>
   );
 };
