@@ -54,7 +54,7 @@ type Props = {
         testimonials: Testimonial[];
         gigs: (Gig & {
           category: Category;
-          reviews: Review[]
+          reviews: Review[];
           thumbnails: Thumbnail[];
           freelancer: Freelancer & { user: User };
         })[];
@@ -65,6 +65,10 @@ type Props = {
 
 const Panels = ({ user, freelancer, session }: Props) => {
   const panels = [
+    {
+      title: "Account Information",
+      show: session?.user?.email === user?.email ?? false,
+    },
     { title: "Freelancer Details", show: freelancer ?? false },
     {
       title: "Manage Gigs",
@@ -87,6 +91,7 @@ const Panels = ({ user, freelancer, session }: Props) => {
   };
 
   const [editFields, setEditFields] = useState(initialFields);
+  const [username, setUsername] = useState(user?.username ? user.username : "");
   const [reviewFields, setReviewFields] = useState({
     message: "",
     rating: 0,
@@ -94,6 +99,7 @@ const Panels = ({ user, freelancer, session }: Props) => {
   const [warnings, setWarnings] = useState<ZodIssue[]>([]);
   const editGigModal = useModal();
   const sendReview = useModal();
+  const editUsernameModal = useModal();
   const router = useRouter();
 
   const handleDeleteGig = async (id: string) => {
@@ -171,10 +177,23 @@ const Panels = ({ user, freelancer, session }: Props) => {
     }
   };
 
+  const handleEditUsername = async () => {
+    await fetch("/api/user/edit-username", {
+      method: "PUT",
+      body: JSON.stringify({
+        id: user?.id,
+        username: username,
+      }),
+    });
+    router.refresh()
+    router.push('/')
+    editUsernameModal.handleClose();
+  };
+
   return (
     <section className="contain space-y-4">
       <Tab.Group as="div" className="flex w-full gap-6">
-        <Tab.List className="flex h-fit flex-col items-center border bg-white">
+        <Tab.List className="flex h-fit flex-col border bg-white">
           {panels.map((panel) => (
             <Tab
               key={panel.title}
@@ -185,7 +204,7 @@ const Panels = ({ user, freelancer, session }: Props) => {
                     : "text-primary-dark hover:bg-slate-100"
                 } ${
                   panel.show ? "block" : "hidden"
-                } w-full whitespace-nowrap border-b px-4 py-2.5 text-sm font-medium leading-5 outline-none`
+                } w-full whitespace-nowrap border-b px-4 py-2.5 text-left text-sm font-medium leading-5 outline-none`
               }>
               {panel.title}
             </Tab>
@@ -193,6 +212,53 @@ const Panels = ({ user, freelancer, session }: Props) => {
         </Tab.List>
 
         <Tab.Panels as="div" className="w-full">
+          <Tab.Panel>
+            <section className="mb-2 flex flex-wrap gap-3">
+              <div className="flex flex-col">
+                <h1 className="mb-2 font-semibold">Name</h1>
+                <div className="flex w-fit flex-col flex-wrap gap-1 rounded border bg-white py-3 px-6">
+                  {user?.name}
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <h1 className="mb-2 font-semibold">Email Address</h1>
+                <div className="flex w-fit flex-col gap-1 rounded border bg-white py-3 px-6">
+                  {user?.email}
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <div className="mb-2 flex items-center gap-3">
+                  <h1 className="font-semibold">Username</h1>
+                  <PencilSquareIcon
+                    className="h-5 w-5 cursor-pointer"
+                    onClick={editUsernameModal.handleOpen}
+                  />
+                </div>
+                <div className="flex w-fit flex-col gap-1 rounded border bg-white py-3 px-6">
+                  {user?.username ? user.username : ""}
+                </div>
+
+                <Modal
+                  state={editUsernameModal.state}
+                  handleClose={editUsernameModal.handleClose}
+                  title="Edit Your Username">
+                  <Field.Body
+                    id="username"
+                    label="Username"
+                    description="What do you want to be your username?">
+                    <Field.Text
+                      id="username"
+                      isFull
+                      value={username}
+                      onChange={(event) => setUsername(event.target.value)}
+                    />
+                  </Field.Body>
+                  <Button onClick={handleEditUsername}>Save Changes</Button>
+                </Modal>
+              </div>
+            </section>
+          </Tab.Panel>
+
           {freelancer ? (
             <Tab.Panel>
               {/* basic */}

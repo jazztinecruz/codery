@@ -57,20 +57,26 @@ const Search = ({ users, gigs }: Props) => {
           className="absolute z-[999] mt-2 max-h-64 w-full overflow-auto rounded-md bg-white shadow-lg">
           {filteredUsers.length > 0 || filteredGigs.length > 0 ? (
             <>
-              {users.filter((user) => user.username?.toLowerCase().includes(searchTerm.toLowerCase())).map((user) => (
-                <Link key={user.id} href={`/${user.username}/profile`}>
-                  <Listbox.Option
-                    value={user}
-                    className={({ active }) =>
-                      `${
-                        active ? "bg-blue-500 text-white" : "text-gray-900"
-                      } cursor-default select-none py-2 pl-3 pr-9`
-                    }
-                    onClick={() => setSearchTerm("")}>
-                    {user.name}
-                  </Listbox.Option>
-                </Link>
-              ))}
+              {users
+                .filter((user) =>
+                  user.username
+                    ?.toLowerCase()
+                    .includes(searchTerm.toLowerCase())
+                )
+                .map((user) => (
+                  <Link key={user.id} href={`/${user.username}/profile`}>
+                    <Listbox.Option
+                      value={user}
+                      className={({ active }) =>
+                        `${
+                          active ? "bg-blue-500 text-white" : "text-gray-900"
+                        } cursor-default select-none py-2 pl-3 pr-9`
+                      }
+                      onClick={() => setSearchTerm("")}>
+                      {user.name}
+                    </Listbox.Option>
+                  </Link>
+                ))}
               {filteredGigs.map((gig) => (
                 <Link
                   key={gig.id}
