@@ -61,7 +61,7 @@ const Panels = ({ user, freelancer, session }: Props) => {
     },
     {
       title: "Freelancer Details",
-      content: <FreelancerDetails user={user} freelancer={freelancer} />,
+      content: <FreelancerDetails session={session} user={user} freelancer={freelancer} />,
       show: freelancer ?? false,
     },
     {

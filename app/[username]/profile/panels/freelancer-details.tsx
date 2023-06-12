@@ -20,9 +20,12 @@ import {
   Thumbnail,
   User,
 } from "@prisma/client";
+import { Session } from "next-auth";
 import Container from "./container";
 
 type Props = {
+  session: Session | null;
+
   user:
     | (User & {
         offers: (Offer & {
@@ -52,16 +55,18 @@ type Props = {
     | null;
 };
 
-const FreelancerDetails = ({ user, freelancer }: Props) => {
+const FreelancerDetails = ({ user, session, freelancer }: Props) => {
   const editModal = useModal();
 
   return (
     <>
       <section className="flex flex-col gap-4">
-        <PencilSquareIcon
-          className="h-5 w-5 cursor-pointer"
-          onClick={editModal.handleOpen}
-        />
+        {session?.user?.email === user?.email && (
+          <PencilSquareIcon
+            className="h-5 w-5 cursor-pointer"
+            onClick={editModal.handleOpen}
+          />
+        )}
 
         <section className="flex flex-wrap gap-3">
           <Container label="Biography">{user?.biography}</Container>

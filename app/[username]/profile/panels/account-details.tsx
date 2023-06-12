@@ -27,6 +27,8 @@ const AccountInformation = ({ user }: Props) => {
   const router = useRouter();
 
   const handleEditUsername = async () => {
+    if (!username) return;
+
     await fetch("/api/user/edit-username", {
       method: "PUT",
       body: JSON.stringify({
