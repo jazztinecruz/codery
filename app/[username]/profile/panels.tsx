@@ -5,7 +5,7 @@ import Badge from "@core/components/elements/badge";
 import Button from "@core/components/elements/button";
 import Field from "@core/components/elements/field";
 import Text from "@core/components/elements/field/text";
-import Textarea from "@core/components/elements/field/textarea";
+import Gigs from "@core/components/sections/gigs";
 import Modal from "@core/components/layouts/modal";
 import useModal from "@core/hooks/use-modal";
 import validate from "@core/utilities/validate";
@@ -19,6 +19,7 @@ import {
   Freelancer,
   Gig,
   Offer,
+  Review,
   Skill,
   Status,
   Technology,
@@ -51,7 +52,12 @@ type Props = {
         educations: Education[];
         employments: Employment[];
         testimonials: Testimonial[];
-        gigs: (Gig & { category: Category; thumbnails: Thumbnail[] })[];
+        gigs: (Gig & {
+          category: Category;
+          reviews: Review[]
+          thumbnails: Thumbnail[];
+          freelancer: Freelancer & { user: User };
+        })[];
         skills: (Skill & { technology: Technology })[];
       })
     | null;
@@ -68,11 +74,7 @@ const Panels = ({ user, freelancer, session }: Props) => {
       title: "Track Offers",
       show: session?.user?.email === user?.email ?? false,
     },
-    {
-      title: "Billing Information",
-      show: session?.user?.email === user?.email ?? false,
-    },
-    { title: "Rating and Reviews", show: true },
+    { title: "Gigs", show: freelancer ?? false },
   ];
 
   const [selectedGig, setSelectedGig] = useState(freelancer?.gigs[0]);
@@ -159,7 +161,7 @@ const Panels = ({ user, freelancer, session }: Props) => {
         });
         setReviewFields({ message: "", rating: 0 });
         setWarnings([]);
-        sendReview.handleClose()
+        sendReview.handleClose();
         router.refresh();
       } catch (error) {
         console.log(error);
@@ -399,6 +401,11 @@ const Panels = ({ user, freelancer, session }: Props) => {
                   </div>
                 ))}
             </>
+          </Tab.Panel>
+
+          <Tab.Panel>
+            {/* @ts-ignore */}
+            <Gigs data={freelancer?.gigs} />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>

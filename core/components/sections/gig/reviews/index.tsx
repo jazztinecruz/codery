@@ -41,7 +41,6 @@ type Props = {
 };
 
 const Reviews = async ({ gig }: Props) => {
-  const user = await useUser();
   const totalRating =
     gig?.reviews &&
     gig?.reviews.reduce((sum, review) => sum + review.rating, 0);

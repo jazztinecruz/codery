@@ -51,7 +51,7 @@ const Details = ({ user, gig }: Props) => {
     <div className="flex flex-col gap-4 rounded p-4">
       <div
         className="flex cursor-pointer items-center gap-3 pr-2"
-        onClick={() => router.push(`/${gig.freelancer.user.username}`)}>
+        onClick={() => router.push(`/${gig.freelancer.user.username}/profile`)}>
         <Avatar src={gig.freelancer.user.image!} alt="Avatar" size="medium" />
         <div className="flex flex-col">
           <h4 className="font-bold">{gig.freelancer.user.name}</h4>

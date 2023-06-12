@@ -38,6 +38,12 @@ const Page = async ({ params }: Props) => {
         include: {
           category: true,
           thumbnails: true,
+          reviews: true,
+          freelancer: {
+            include: {
+              user: true
+            }
+          }
         },
       },
       educations: true,
