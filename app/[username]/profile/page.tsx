@@ -6,6 +6,7 @@ import prisma from "@core/libraries/prisma";
 import { MapPinIcon, AtSymbolIcon, UserIcon } from "@heroicons/react/24/solid";
 import moment from "moment";
 import Panels from "./panels";
+import PanelsCopy from "./panels";
 
 type Props = {
   params: {
@@ -41,9 +42,9 @@ const Page = async ({ params }: Props) => {
           reviews: true,
           freelancer: {
             include: {
-              user: true
-            }
-          }
+              user: true,
+            },
+          },
         },
       },
       educations: true,
@@ -97,9 +98,9 @@ const Page = async ({ params }: Props) => {
           </div>
         </div>
       </section>
-
-      {/* @ts-ignore */}
-      <Panels user={user} freelancer={freelancer} session={session} />
+      
+      {/* @ts-ignore*/}
+      <Panels user={user} session={session} freelancer={freelancer}/>
     </>
   );
 };
