@@ -4,8 +4,12 @@ import Avatar from "@core/components/elements/avatar";
 import Badge from "@core/components/elements/badge";
 import Button from "@core/components/elements/button";
 import Field from "@core/components/elements/field";
+import Text from "@core/components/elements/field/text";
+import Textarea from "@core/components/elements/field/textarea";
 import Modal from "@core/components/layouts/modal";
 import useModal from "@core/hooks/use-modal";
+import validate from "@core/utilities/validate";
+import schemas from "@core/validations/schemas";
 import { Menu, Tab } from "@headlessui/react";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
@@ -26,6 +30,7 @@ import { Session } from "next-auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Fragment, useState } from "react";
+import { ZodIssue } from "zod";
 
 type Props = {
   session: Session | null;
@@ -80,7 +85,13 @@ const Panels = ({ user, freelancer, session }: Props) => {
   };
 
   const [editFields, setEditFields] = useState(initialFields);
+  const [reviewFields, setReviewFields] = useState({
+    message: "",
+    rating: 0,
+  });
+  const [warnings, setWarnings] = useState<ZodIssue[]>([]);
   const editGigModal = useModal();
+  const sendReview = useModal();
   const router = useRouter();
 
   const handleDeleteGig = async (id: string) => {
@@ -129,6 +140,35 @@ const Panels = ({ user, freelancer, session }: Props) => {
     });
     router.refresh();
   };
+
+  const handleCreateReview = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+    const result = schemas.review.safeParse(reviewFields);
+    if (result.success) {
+      try {
+        await fetch(`/api/gigs/${selectedGig?.id}/create-review`, {
+          method: "POST",
+          body: JSON.stringify({
+            message: reviewFields.message,
+            rating: reviewFields.rating,
+            gigId: selectedGig?.id,
+            userId: user?.id,
+          }),
+        });
+        setReviewFields({ message: "", rating: 0 });
+        setWarnings([]);
+        sendReview.handleClose()
+        router.refresh();
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      setWarnings(result.error.issues);
+    }
+  };
+
   return (
     <section className="contain space-y-4">
       <Tab.Group as="div" className="flex w-full gap-6">
@@ -345,12 +385,73 @@ const Panels = ({ user, freelancer, session }: Props) => {
                       />
                       <h6>{offer.freelancer.user.name}</h6>
                     </div>
+                    {offer.status === "DELIVERED" ? (
+                      <Button
+                        className="w-fit"
+                        onClick={() => {
+                          sendReview.handleOpen();
+                          //@ts-ignore
+                          setSelectedGig(offer.gig);
+                        }}>
+                        Send Review
+                      </Button>
+                    ) : null}
                   </div>
                 ))}
             </>
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
+
+      <Modal
+        title="Send Feedback: Details"
+        description="How satisfied are you in your freelancer's work? Send us a Feedback!"
+        state={sendReview.state}
+        handleClose={sendReview.handleClose}
+        className="z-[999] max-w-5xl">
+        <form className="space-y-4">
+          <Field.Body id="message" label="Title" description="Gig Information">
+            <Text id="title" isDisabled value={selectedGig?.title} isFull />
+          </Field.Body>
+          <Field.Body
+            id="message"
+            label="Message"
+            warning={validate(warnings, "message")}
+            description="What is your review?">
+            <Field.Textarea
+              id="message"
+              isFull
+              placeholder="Your Review here"
+              value={reviewFields.message}
+              onChange={(event) =>
+                setReviewFields({
+                  ...reviewFields,
+                  message: event.target.value,
+                })
+              }
+            />
+          </Field.Body>
+
+          <Field.Body
+            id="rating"
+            label="Rating"
+            warning={validate(warnings, "rating")}
+            description="How many will you rate this freelancer?">
+            <Field.Number
+              id="rating"
+              isFull
+              value={reviewFields.rating}
+              onChange={(event) =>
+                setReviewFields({
+                  ...reviewFields,
+                  rating: +event.target.value,
+                })
+              }
+            />
+          </Field.Body>
+          <Button onClick={handleCreateReview}>Post Review</Button>
+        </form>
+      </Modal>
 
       <Modal
         title="Edit Gig: Details"

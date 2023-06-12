@@ -19,7 +19,6 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ZodIssue } from "zod";
-import Form from "./form";
 import Review from "./review";
 
 type Props = {
@@ -51,10 +50,6 @@ const Reviews = async ({ gig }: Props) => {
 
   return (
     <section className="contain space-y-8">
-      {gig?.freelancer.userId !== user?.id ? (
-        <Form gig={gig} user={user} />
-      ) : null}
-
       {gig?.reviews.length ? (
         <section className="w-full space-y-4">
           <div className="flex items-center gap-3 ">
