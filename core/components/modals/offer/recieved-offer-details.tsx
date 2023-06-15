@@ -88,7 +88,7 @@ const RecievedOfferDetailsModal = ({ offer, modal, user }: Props) => {
       <PaymentModal user={user} modal={paymentModal} price={offer.price} offferId={offer.id} />
 
       <Modal
-        title="Rules and Regulations: Payment"
+        title="Terms and Conditions: Payment"
         description="By Clicking Continue, this will prove that you agreed to our rules and regulations before paying."
         state={paymentRulesModal.state}
         handleClose={paymentRulesModal.handleClose}
