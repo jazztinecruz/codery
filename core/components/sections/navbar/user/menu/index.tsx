@@ -98,7 +98,7 @@ const Menu = ({ user, className }: Props) => {
       </HeadlessuiMenu>
 
       <Modal
-        title="Rules and Regulations: Becoming Freelancer"
+        title="Terms and Conditions: Becoming Freelancer"
         description="By Clicking Continue, this will prove that you agreed to our rules and regulations when becoming a freelancer."
         state={becomeFreelancerModal.state}
         handleClose={becomeFreelancerModal.handleClose}

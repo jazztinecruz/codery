@@ -314,4 +314,5 @@ enum Status {
   PENDING
   WORKING
   DELIVERED
+  COMPLETED
 }

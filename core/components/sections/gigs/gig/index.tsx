@@ -93,7 +93,7 @@ const Gig = ({ data: gig }: Props) => {
                 </div>
               )}
               <div>
-                <p className="text-sm font-bold text-primary-dark">{`$${gig.from} - $${gig.to}`}</p>
+                <p className="text-sm font-bold text-primary-dark">{`PHP${gig.from} - PHP${gig.to}`}</p>
               </div>
             </div>
           </div>

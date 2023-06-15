@@ -105,7 +105,7 @@ const TrackOffers = ({ user, freelancer }: Props) => {
   };
 
   if (!freelancer?.offers || !user?.offers) return <>No Offers</>;
-  
+
   return (
     <>
       {freelancer?.offers
@@ -122,22 +122,28 @@ const TrackOffers = ({ user, freelancer }: Props) => {
               <h6>{offer.user.name}</h6>
             </div>
 
-            <Menu as="div" className="relative">
-              <Menu.Button>
-                <Button>ACTION</Button>
-              </Menu.Button>
-              <Menu.Items className="absolute top-8 right-0 z-10 flex w-64 flex-col bg-white shadow-lg">
-                {Object.values(Status).map((status: any) => (
-                  <Menu.Item key={status} as={Fragment}>
-                    <button
-                      className="px-4 py-3 hover:bg-primary-dark hover:text-white"
-                      onClick={() => handleUpdateOfferStatus(offer.id, status)}>
-                      {status}
-                    </button>
-                  </Menu.Item>
-                ))}
-              </Menu.Items>
-            </Menu>
+            {offer.status !== "COMPLETED" ? (
+              <Menu as="div" className="relative">
+                <Menu.Button>
+                  <Button>Update Status</Button>
+                </Menu.Button>
+                <Menu.Items className="absolute top-8 right-0 z-10 flex w-64 flex-col bg-white shadow-lg">
+                  {Object.values(Status)
+                    .filter((status) => status !== "COMPLETED")
+                    .map((status: any) => (
+                      <Menu.Item key={status} as={Fragment}>
+                        <button
+                          className="px-4 py-3 hover:bg-primary-dark hover:text-white"
+                          onClick={() =>
+                            handleUpdateOfferStatus(offer.id, status)
+                          }>
+                          {status}
+                        </button>
+                      </Menu.Item>
+                    ))}
+                </Menu.Items>
+              </Menu>
+            ) : null}
           </div>
         ))}
 
@@ -158,7 +164,16 @@ const TrackOffers = ({ user, freelancer }: Props) => {
               />
               <h6>{offer.freelancer.user.name}</h6>
             </div>
+
             {offer.status === "DELIVERED" ? (
+              <Button
+                className="w-fit"
+                onClick={() => handleUpdateOfferStatus(offer.id, "COMPLETED")}>
+                Set as Completed
+              </Button>
+            ) : null}
+
+            {offer.status === "COMPLETED" ? (
               <Button
                 className="w-fit"
                 onClick={() => {
@@ -166,7 +181,7 @@ const TrackOffers = ({ user, freelancer }: Props) => {
                   //@ts-ignore
                   setSelectedGig(offer.gig);
                 }}>
-                Send Review
+                Send Feedback
               </Button>
             ) : null}
           </div>
