@@ -105,8 +105,6 @@ const TrackOffers = ({ user, freelancer }: Props) => {
     }
   };
 
-  if (!user?.offers.length) return <>No Offers Available</>;
-
   return (
     <>
       {freelancer?.offers
