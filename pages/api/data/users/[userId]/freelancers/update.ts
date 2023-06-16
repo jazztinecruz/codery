@@ -17,10 +17,45 @@ const handler = async (request: NextApiRequest, response: NextApiResponse) => {
       await prisma.freelancer.update({
         where: { userId: String(userId) },
         data: {
-          skills: body.skills,
-          employments: body.employments,
-          educations: body.educations,
-          testimonials: body.testimonials,
+          skills: {
+            deleteMany: {},
+          },
+          employments: {
+            deleteMany: {},
+          },
+          educations: {
+            deleteMany: {},
+          },
+          testimonials: {
+            deleteMany: {},
+          },
+        },
+      });
+      await prisma.freelancer.update({
+        where: {
+          userId: String(userId),
+        },
+        data: {
+          skills: {
+            createMany: {
+              data: body.skills,
+            },
+          },
+          employments: {
+            createMany: {
+              data: body.employments,
+            },
+          },
+          educations: {
+            createMany: {
+              data: body.educations,
+            },
+          },
+          testimonials: {
+            createMany: {
+              data: body.testimonials,
+            },
+          },
         },
       });
       response.status(201).send({ message: "OK" });

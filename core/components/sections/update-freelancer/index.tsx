@@ -72,7 +72,8 @@ const UpdateFreelancer = ({ user, freelancer }: Props) => {
           }
         );
         if (response.status === 201) {
-          router.push("/");
+          router.back();
+          router.refresh();
         }
       } catch (error) {
         console.error(error);
