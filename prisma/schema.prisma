@@ -51,6 +51,17 @@ model User {
   offers       Offer[]
   reviews      Review[]
   sentMessages Message[]   @relation("sender")
+  reports      Report[]
+}
+
+model Report {
+  id      String @id @default(cuid())
+  message String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  @@index([userId])
 }
 
 model Client {

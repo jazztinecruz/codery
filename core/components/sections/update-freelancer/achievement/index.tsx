@@ -89,6 +89,10 @@ const Achievement = ({ warnings, freelancer }: Props) => {
                 key={index}
                 title={education.school}
                 subtitle={`${education.from.name} - ${education.to.name}`}
+                removeHandler={() => {
+                  const updatedEducations = [...fields.educations];
+                  mergeFields.educations(updatedEducations.slice(index + 1, 1));
+                }}
               />
             ))}
           </ul>
@@ -108,6 +112,12 @@ const Achievement = ({ warnings, freelancer }: Props) => {
                 key={index}
                 title={testimonial.name}
                 subtitle={testimonial.position}
+                removeHandler={() => {
+                  const updatedTestimonials = [...fields.testimonials];
+                  mergeFields.testimonials(
+                    updatedTestimonials.slice(index + 1, 1)
+                  );
+                }}
               />
             ))}
           </ul>

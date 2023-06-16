@@ -16,6 +16,7 @@ import {
   Testimonial,
 } from "@prisma/client";
 import { useEffect } from "react";
+import cuid from "cuid";
 
 type Props = {
   warnings: ZodIssue[];
@@ -50,6 +51,16 @@ const Experience = ({ warnings, freelancer }: Props) => {
 
       mergeFields.skills(skills || []);
     }
+    const employments = freelancer?.employments.map((employment) => ({
+      location: employment.location,
+      position: employment.position,
+      company: employment.company,
+      description: employment.description,
+      from: { id: cuid(), name: employment.from },
+      to: { id: cuid(), name: employment.to },
+      isActive: employment.isActive,
+    }));
+    mergeFields.employments(employments || []);
   }, []);
 
   const modalEmployment = useModal();
@@ -80,6 +91,12 @@ const Experience = ({ warnings, freelancer }: Props) => {
                 key={index}
                 title={employment.company}
                 subtitle={employment.position}
+                removeHandler={() => {
+                  const updatedEmployments = [...fields.employments];
+                  mergeFields.employments(
+                    updatedEmployments.slice(index + 1, 1)
+                  );
+                }}
               />
             ))}
           </ul>
@@ -90,4 +107,4 @@ const Experience = ({ warnings, freelancer }: Props) => {
   );
 };
 
-export default Experience
+export default Experience;
