@@ -145,7 +145,7 @@ const ManageGigs = ({ freelancer }: Props) => {
             <Field.Text
               id="title"
               isFull
-              value={selectedGig?.title}
+              value={editFields?.title}
               onChange={(event) =>
                 setEditFields({ ...editFields, title: event.target.value })
               }
@@ -159,7 +159,7 @@ const ManageGigs = ({ freelancer }: Props) => {
             <Field.Textarea
               id="description"
               isFull
-              value={selectedGig?.description}
+              value={editFields?.description}
               onChange={(event) =>
                 setEditFields({
                   ...editFields,
@@ -176,7 +176,7 @@ const ManageGigs = ({ freelancer }: Props) => {
             <Field.Number
               id="from"
               isFull
-              defaultValue={selectedGig?.from}
+              value={editFields?.from}
               onChange={(event) =>
                 setEditFields({ ...editFields, from: +event.target.value })
               }
@@ -187,7 +187,7 @@ const ManageGigs = ({ freelancer }: Props) => {
             <Field.Number
               id="to"
               isFull
-              defaultValue={selectedGig?.to}
+              value={editFields?.to}
               onChange={(event) =>
                 setEditFields({ ...editFields, to: +event.target.value })
               }
@@ -201,7 +201,7 @@ const ManageGigs = ({ freelancer }: Props) => {
             <Field.Number
               id="period"
               isFull
-              defaultValue={selectedGig?.period}
+              value={editFields?.period}
               onChange={(event) =>
                 setEditFields({ ...editFields, period: +event.target.value })
               }

@@ -22,8 +22,8 @@ const PaymentModal = ({ modal, user, price, offferId }: Props) => {
   const [warnings, setWarnings] = useState<ZodIssue[]>([]);
 
   const [fields, setFields] = useState({
-    month: 0,
-    year: 0,
+    month: 1,
+    year: 2023,
     cvc: "",
     description: "",
   });

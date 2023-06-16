@@ -9,7 +9,14 @@ type Props = {
   isDisabled?: boolean;
 };
 
-const Number = ({ id, isFull, value, defaultValue, onChange, isDisabled }: Props) => {
+const Number = ({
+  id,
+  isFull,
+  value,
+  defaultValue,
+  onChange,
+  isDisabled,
+}: Props) => {
   return (
     <div>
       <input

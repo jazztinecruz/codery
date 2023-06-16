@@ -5,6 +5,21 @@ import { create } from "zustand";
 
 type Freelancer = {
   fields: z.infer<typeof schemas.freelancer.base>;
+  mergeFields: {
+    biography: (payload: string) => void;
+    location: (payload: string) => void;
+    phone: (payload: string) => void;
+    skills: (payload: { id: string; name: string }[]) => void;
+    testimonials: (
+      payload: z.infer<typeof schemas.freelancer.testimonial>[]
+    ) => void;
+    employments: (
+      payload: z.infer<typeof schemas.freelancer.employment>[]
+    ) => void;
+    educations: (
+      payload: z.infer<typeof schemas.freelancer.education>[]
+    ) => void;
+  };
   setFields: {
     biography: (payload: ChangeEvent<HTMLTextAreaElement>) => void;
     location: (payload: ChangeEvent<HTMLInputElement>) => void;
@@ -33,6 +48,48 @@ const initialState = {
 
 const freelancer = create<Freelancer>((set) => ({
   fields: initialState,
+  mergeFields: {
+    biography: (payload) =>
+      set((state) => ({
+        fields: { ...state.fields, biography: payload },
+      })),
+    location: (payload) =>
+      set((state) => ({
+        fields: { ...state.fields, location: payload },
+      })),
+    phone: (payload) =>
+      set((state) => ({
+        fields: { ...state.fields, phone: payload },
+      })),
+    skills: (payload) =>
+      set((state) => ({
+        fields: {
+          ...state.fields,
+          skills: payload,
+        },
+      })),
+    testimonials: (payload) =>
+      set((state) => ({
+        fields: {
+          ...state.fields,
+          testimonials: payload,
+        },
+      })),
+    employments: (payload) =>
+      set((state) => ({
+        fields: {
+          ...state.fields,
+          employments: payload,
+        },
+      })),
+    educations: (payload) =>
+      set((state) => ({
+        fields: {
+          ...state.fields,
+          educations: payload,
+        },
+      })),
+  },
   setFields: {
     biography: (payload) =>
       set((state) => ({

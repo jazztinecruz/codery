@@ -21,6 +21,7 @@ import {
   User,
 } from "@prisma/client";
 import { Session } from "next-auth";
+import Link from "next/link";
 import Container from "./container";
 
 type Props = {
@@ -56,16 +57,13 @@ type Props = {
 };
 
 const FreelancerDetails = ({ user, session, freelancer }: Props) => {
-  const editModal = useModal();
-
   return (
     <>
       <section className="flex flex-col gap-4">
         {session?.user?.email === user?.email && (
-          <PencilSquareIcon
-            className="h-5 w-5 cursor-pointer"
-            onClick={editModal.handleOpen}
-          />
+          <Link href={`/${user?.username}/edit-freelancer`}>
+            <PencilSquareIcon className="h-5 w-5 cursor-pointer" />
+          </Link>
         )}
 
         <section className="flex flex-wrap gap-3">
@@ -133,14 +131,6 @@ const FreelancerDetails = ({ user, session, freelancer }: Props) => {
           ))}
         </section>
       </section>
-
-      <Modal
-        state={editModal.state}
-        handleClose={editModal.handleClose}
-        title="Edit Your Freelancer Details">
-        Edit
-        <Button>Save Changes</Button>
-      </Modal>
     </>
   );
 };

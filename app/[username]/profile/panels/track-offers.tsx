@@ -56,6 +56,7 @@ type Props = {
 };
 
 const TrackOffers = ({ user, freelancer }: Props) => {
+  console.log(user);
   const [selectedGig, setSelectedGig] = useState(freelancer?.gigs[0]);
   const [warnings, setWarnings] = useState<ZodIssue[]>([]);
   const sendReview = useModal();
@@ -104,7 +105,7 @@ const TrackOffers = ({ user, freelancer }: Props) => {
     }
   };
 
-  if (!freelancer?.offers || !user?.offers) return <>No Offers</>;
+  if (!user?.offers.length) return <>No Offers Available</>;
 
   return (
     <>

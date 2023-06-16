@@ -73,9 +73,6 @@ const RecievedOfferDetailsModal = ({ offer, modal, user }: Props) => {
           <Button onClick={paymentRulesModal.handleOpen}>
             Accept Offer and Pay
           </Button>
-          <Button variant="secondary" onClick={modal.handleClose}>
-            Decline Offer
-          </Button>
           <Button
             variant="tertiary"
             onClick={modal.handleClose}
@@ -85,7 +82,12 @@ const RecievedOfferDetailsModal = ({ offer, modal, user }: Props) => {
         </div>
       </Modal>
 
-      <PaymentModal user={user} modal={paymentModal} price={offer.price} offferId={offer.id} />
+      <PaymentModal
+        user={user}
+        modal={paymentModal}
+        price={offer.price}
+        offferId={offer.id}
+      />
 
       <Modal
         title="Terms and Conditions: Payment"
