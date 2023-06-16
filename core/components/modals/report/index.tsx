@@ -4,6 +4,7 @@ import Button from "@core/components/elements/button";
 import Field from "@core/components/elements/field";
 import Modal from "@core/components/layouts/modal";
 import useModal from "@core/hooks/use-modal";
+import axios from "axios";
 import { useState } from "react";
 
 type Props = {
@@ -18,11 +19,12 @@ const Report = ({ userId }: Props) => {
   });
 
   const handleSubmit = async () => {
-    await fetch('/api/report', {
-      method: "PUT",
-      body: JSON.stringify({ userId: userId }),
+    await axios.post("/api/report-user", {
+      userId: userId,
+      message: fields.reason,
     });
-    setFields({...fields,reason: ""});
+
+    setFields({ ...fields, reason: "" });
     modal.handleClose();
   };
 
