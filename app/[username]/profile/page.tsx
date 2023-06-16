@@ -1,12 +1,13 @@
 import Avatar from "@core/components/elements/avatar";
+import Button from "@core/components/elements/button";
 import Pin from "@core/components/elements/pin";
+import Report from "@core/components/modals/report";
 import Hero from "@core/components/sections/hero";
 import useSession from "@core/hooks/use-session";
 import prisma from "@core/libraries/prisma";
 import { MapPinIcon, AtSymbolIcon, UserIcon } from "@heroicons/react/24/solid";
 import moment from "moment";
 import Panels from "./panels";
-import PanelsCopy from "./panels";
 
 type Props = {
   params: {
@@ -67,7 +68,7 @@ const Page = async ({ params }: Props) => {
   return (
     <>
       <Hero image="https://images.unsplash.com/photo-1595776613215-fe04b78de7d0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" />
-      <section className="contain">
+      <section className="contain w-full ">
         <div className="ml-4 flex gap-8">
           <Avatar
             src={user?.image!}
@@ -75,7 +76,7 @@ const Page = async ({ params }: Props) => {
             size="large"
             className="-mt-20 rounded-full border"
           />
-          <div className="flex flex-col justify-end space-y-2">
+          <div className="flex w-full flex-col justify-end space-y-2">
             <h1 className="text-5xl font-bold">{user?.name}</h1>
             <div className="flex gap-4">
               <Pin size="medium" Icon={AtSymbolIcon}>
@@ -96,11 +97,15 @@ const Page = async ({ params }: Props) => {
               ) : null}
             </div>
           </div>
+          
+          {session?.user?.email !== user?.email ? (
+            <Report userId={user?.id!} />
+          ) : null}
         </div>
       </section>
-      
+
       {/* @ts-ignore*/}
-      <Panels user={user} session={session} freelancer={freelancer}/>
+      <Panels user={user} session={session} freelancer={freelancer} />
     </>
   );
 };
