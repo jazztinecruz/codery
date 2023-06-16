@@ -1,3 +1,5 @@
+"use client";
+
 import Button from "@core/components/elements/button";
 import Field from "@core/components/elements/field";
 import Modal from "@core/components/layouts/modal";
@@ -18,11 +20,20 @@ type Props = {
     freelancer: Freelancer | null;
   };
 };
+
 const RecievedOfferDetailsModal = ({ offer, modal, user }: Props) => {
   if (!offer) return <></>;
 
   const paymentModal = useModal();
   const paymentRulesModal = useModal();
+
+  const handleDecline = async () => {
+    await fetch("/api/payment/decline-offer", {
+      method: "PUT",
+      body: JSON.stringify({ id: offer.id }),
+    });
+    modal.handleClose();
+  };
 
   return (
     <>
@@ -72,6 +83,9 @@ const RecievedOfferDetailsModal = ({ offer, modal, user }: Props) => {
         <div className="flex w-full gap-4">
           <Button onClick={paymentRulesModal.handleOpen}>
             Accept Offer and Pay
+          </Button>
+          <Button variant="secondary" onClick={handleDecline}>
+            Decline Offer
           </Button>
           <Button
             variant="tertiary"

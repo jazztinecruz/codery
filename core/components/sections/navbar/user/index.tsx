@@ -51,24 +51,27 @@ const User = ({ user, offers }: Props) => {
               </div>
 
               <section className="flex flex-col">
-                {offers.map((offer) => (
-                  <>
-                    <div
-                      key={offer.id}
-                      className="smooth  z-50 flex w-full cursor-pointer items-center justify-between rounded p-3 hover:bg-slate-100">
-                      <h1 className="font-semibold">
-                        You received an Offer from {offer.freelancer.user.name}
-                      </h1>
-                      <Button
-                        onClick={() => {
-                          setSelectedOffer(offer);
-                          openOfferDetails.handleOpen();
-                        }}>
-                        See Details
-                      </Button>
-                    </div>
-                  </>
-                ))}
+                {offers
+                  .filter((offer) => !offer.isDeclined)
+                  .map((offer) => (
+                    <>
+                      <div
+                        key={offer.id}
+                        className="smooth  z-50 flex w-full cursor-pointer items-center justify-between rounded p-3 hover:bg-slate-100">
+                        <h1 className="font-semibold">
+                          You received an Offer from{" "}
+                          {offer.freelancer.user.name}
+                        </h1>
+                        <Button
+                          onClick={() => {
+                            setSelectedOffer(offer);
+                            openOfferDetails.handleOpen();
+                          }}>
+                          See Details
+                        </Button>
+                      </div>
+                    </>
+                  ))}
               </section>
             </Popover.Panel>
           </Transition.PopDown>

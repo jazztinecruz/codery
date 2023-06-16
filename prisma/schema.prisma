@@ -247,14 +247,15 @@ model Contract {
 }
 
 model Offer {
-  id           String  @id @default(cuid())
+  id           String   @id @default(cuid())
   title        String
-  description  String  @db.VarChar(5000)
-  isAccepted   Boolean @default(false)
+  description  String   @db.VarChar(5000)
+  isAccepted   Boolean  @default(false)
+  isDeclined   Boolean? @default(false)
   deliveryDays Int
   price        Int
   revision     Int
-  status       Status  @default(PENDING)
+  status       Status   @default(PENDING)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
